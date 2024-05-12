@@ -1,0 +1,28 @@
+version: '3'
+services:
+  app_sissivelas:
+    build: sissi_velas
+    mem_limit: 512m
+    ports :
+      - "8080:8080"
+    environment :
+      DB URL: jdbc:mysql://sissi_velas:3306/sissivelas_ecom?createDatabaseIfNotExist=true&serverTimezone=UTC
+      DB USER NAME: root
+      DB PASSWORD: 1234
+    restart: always
+    depends_on :
+      sissi_velas:
+          condition: service_healthy
+  sissi_velas:
+    image: mysql:8.0.33
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_PASSWORD: 1234
+      MYSQL DATABASE: sissivelas_ecom
+    restart: always
+    healthcheck:
+        test: ["CMD", "mysqladmin" , "ping", "-h", "localhost"]
+        timeout: 10s
+        retries: 10
